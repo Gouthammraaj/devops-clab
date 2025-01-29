@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db  # Persist MongoDB data even if the container is removed
+
+  node-app:
+    build: .
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DB=mongodb://mongodb:27017/mydatabase  # Use 'mongodb' as the hostname, since it is the service name
+    depends_on:
+      - mongodb
+    volumes:
+      - ./.env:/app/.env  # Ensure .env file is copied into the container
+
+volumes:
+  mongodb-data:
